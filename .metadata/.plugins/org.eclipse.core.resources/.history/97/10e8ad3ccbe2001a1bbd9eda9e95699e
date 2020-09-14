@@ -1,0 +1,17 @@
+package SCC;
+
+import java.security.SecureRandom;
+import java.util.Random;
+
+public class generatorTest {
+
+	public static void main(String[] args) {
+		for(int i = 0;i<16;i++) {
+			Random random = new Random();
+			int h = random.nextInt(16);
+			System.out.println(Integer.toHexString(h));
+		}
+		
+	}
+
+}

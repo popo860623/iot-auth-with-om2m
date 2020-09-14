@@ -1,0 +1,51 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.jdom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.XMLOutputter;
+import org.xml.sax.InputSource;
+
+@WebServlet(urlPatterns = {"/notify"})
+public class Notification extends HttpServlet{
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		PrintWriter out = resp.getWriter();
+		out.println("Hello, World");	
+	}
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		PrintWriter out = resp.getWriter();
+		String res_xml = "";
+		String temp;
+		System.out.println("Received Notification");
+		BufferedReader br=req.getReader();
+		while ((temp = br.readLine()) != null)
+			res_xml += temp + "\n";		
+	
+		String key = getTagValue(res_xml, "con");
+		System.out.println("New Key : "key);
+		
+	}
+	
+	public static void printXMLtoString(Element element) {
+		XMLOutputter out = new XMLOutputter();
+		String s = out.outputString(element);
+		System.out.println(s);
+	}
+	public static String getTagValue(String xml, String tagName) {
+		return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
+	}
+}

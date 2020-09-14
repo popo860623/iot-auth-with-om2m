@@ -1,0 +1,53 @@
+package org.eclipse.om2m.sample.test_ipe;
+
+import java.math.BigInteger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.om2m.commons.constants.ResponseStatusCode;
+import org.eclipse.om2m.commons.resource.AE;
+import org.eclipse.om2m.commons.resource.Container;
+import org.eclipse.om2m.commons.resource.ContentInstance;
+import org.eclipse.om2m.commons.resource.ResponsePrimitive;
+
+public class FUNC {
+	private static Log LOGGER = LogFactory.getLog(FUNC.class);
+
+	public static void createResources(String appId, String poa) {
+		System.out.println("登入JUNC=========================");
+		Container container = new Container();
+		container.getLabels().add("key_manager");
+		container.setMaxNrOfInstances(BigInteger.valueOf(0));
+
+		AE ae = new AE();
+		ae.setRequestReachability(true);
+		ae.getPointOfAccess().add(poa);
+		ae.setAppID(appId);
+		ae.setName(appId);
+
+		ResponsePrimitive response = RequestSender.createAE(ae);
+
+		// Create Application sub-resources only if application not yet created
+		if (response.getResponseStatusCode().equals(ResponseStatusCode.CREATED)) {
+			container = new Container();
+			container.setMaxNrOfInstances(BigInteger.valueOf(10));
+			// Create STATE container sub-resource
+			container.setName(Constants.DATA);
+			LOGGER.info(RequestSender.createContainer(response.getLocation(), container));
+			createContentInstances(Constants.IPE_NAME);
+		}
+	}
+
+	public static void createContentInstances(String appId) {
+
+		ContentInstance cin = new ContentInstance();
+		cin.setContent("123");
+		cin.setName("456");
+		System.out.println("*******************************************************************************");
+		ResponsePrimitive response = RequestSender.createContentInstance("/mn-cse/mn-name/" + appId + "/DATA", cin);
+		if (response.getResponseStatusCode().equals(ResponseStatusCode.CREATED)) {
+			System.out.println("Key initialization OK!");
+		}
+
+	}
+}

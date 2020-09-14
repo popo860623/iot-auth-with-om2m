@@ -1,0 +1,23 @@
+package org.eclipse.om2m.sample.test_ipe;
+
+import org.eclipse.om2m.commons.resource.RequestPrimitive;
+import org.eclipse.om2m.commons.resource.ResponsePrimitive;
+import org.eclipse.om2m.interworking.service.InterworkingService;
+
+public class key_manager implements InterworkingService{
+
+	@Override
+	public ResponsePrimitive doExecute(RequestPrimitive request) {
+		ResponsePrimitive response = new ResponsePrimitive(request);
+		response.getResponseStatusCode();
+		System.out.println("hello .....");
+		
+		return null;
+	}
+
+	@Override
+	public String getAPOCPath() {
+		// TODO Auto-generated method stub
+		return Constants.POA;
+	}
+}

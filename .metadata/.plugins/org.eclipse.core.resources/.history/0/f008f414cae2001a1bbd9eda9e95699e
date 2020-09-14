@@ -1,0 +1,15 @@
+package SCC;
+
+import java.security.SecureRandom;
+
+public class generatorTest {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		SecureRandom random = new SecureRandom();
+		byte bytes[] = new byte[16];
+		random.nextBytes(bytes);
+		System.out.println(bytes);
+	}
+
+}

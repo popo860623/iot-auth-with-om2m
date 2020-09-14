@@ -1,0 +1,65 @@
+package org.eclipse.om2m.sample.test_ipe;
+
+import java.math.BigInteger;
+import java.util.Random;
+import java.util.logging.Logger;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.om2m.commons.constants.ResponseStatusCode;
+import org.eclipse.om2m.commons.resource.AE;
+import org.eclipse.om2m.commons.resource.Container;
+import org.eclipse.om2m.commons.resource.ContentInstance;
+import org.eclipse.om2m.commons.resource.ResponsePrimitive;
+
+public class FUNC {
+	private static Log LOGGER = LogFactory.getLog(FUNC.class);
+
+	public static void createResources(String appId, String poa) {
+		System.out.println("登入JUNC=========================");
+		Container container = new Container();
+		container.getLabels().add("key_manager");
+		container.setMaxNrOfInstances(BigInteger.valueOf(0));
+
+		AE ae = new AE();
+		ae.setRequestReachability(true);
+		ae.getPointOfAccess().add(poa);
+		ae.setAppID(appId);
+		ae.setName(appId);
+
+		ResponsePrimitive response = RequestSender.createAE(ae);
+
+		// Create Application sub-resources only if application not yet created
+		if (response.getResponseStatusCode().equals(ResponseStatusCode.CREATED)) {
+			container = new Container();
+			container.setMaxNrOfInstances(BigInteger.valueOf(10));
+			// Create STATE container sub-resource
+			container.setName(Constants.DATA);
+			LOGGER.info(RequestSender.createContainer(response.getLocation(), container));
+			int key_number = 4;
+			createContentInstances(Constants.IPE_NAME, key_number);
+
+			}
+
+		}
+	}
+
+	public static void createContentInstances(String appId, int n) {
+		String s = "";
+		for (int j = 0; j < n; j++) {
+			for (int i = 0; i < 16; i++) {
+				Random random = new Random();
+				int h = random.nextInt(16);
+				s += Integer.toHexString(h);				
+			}
+			System.out.println(s);
+			ContentInstance cin = new ContentInstance();
+			cin.setContent("123");
+			cin.setName(s);
+			LOGGER.info(RequestSender.createContentInstance("/mn-cse/mn-name/" + appId + "/DATA", cin));
+			s = "";
+		}
+		
+
+	}
+}

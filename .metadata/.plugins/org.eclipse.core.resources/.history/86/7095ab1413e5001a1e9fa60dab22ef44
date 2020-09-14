@@ -1,0 +1,61 @@
+package SCC;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Base64;
+
+public class RequestSender {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+	public static void send_request(String data, URL url, String type) {
+		try {
+			if(type=="GET") {
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+				connection.setRequestMethod(type);
+				connection.setDoOutput(true);
+				connection.setDoInput(true);
+				connection.setRequestProperty("Content-Type", type);
+				connection.setRequestProperty("Authorization",
+						"Basic " + Base64.getEncoder().encodeToString("admin:admin".getBytes()));
+				connection.setUseCaches(false);
+				if (connection.getResponseCode() == 201) { // 201 ��귽���\�Q�Ы�
+					System.out.println("Connect Success.");
+					InputStream inputStream = connection.getInputStream();
+					String reString = null;
+					try {
+						byte[] data1 = new byte[inputStream.available()];
+						inputStream.read(data1);
+						reString = new String(data1);
+						System.out.println(reString);
+					} catch (Exception e) {
+						// TODO: handle exception
+						e.printStackTrace();
+					}
+				} else {
+					System.out.println("Connect Failed.");
+				}
+			}
+			
+			
+
+		} catch (MalformedURLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+	}
+}

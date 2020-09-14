@@ -1,0 +1,43 @@
+package org.eclipse.om2m.sample.test_ipe;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.Random;
+
+import org.eclipse.om2m.commons.resource.RequestPrimitive;
+import org.eclipse.om2m.commons.resource.ResponsePrimitive;
+import org.eclipse.om2m.interworking.service.InterworkingService;
+
+public class key_manager implements InterworkingService {
+
+	@Override;
+	public ResponsePrimitive doExecute(RequestPrimitive request) {
+		ResponsePrimitive response = new ResponsePrimitive(request);
+		response.getResponseStatusCode();
+		
+		PrintWriter writer = new PrintWriter(new File("key_db.txt"));
+		
+		String s = "";
+		for(int i = 0;i<16;i++) {
+			Random random = new Random();
+			int h = random.nextInt(16);
+			
+			s += Integer.toHexString(h);
+			
+		}
+		System.out.println(s);
+		return null;
+	}
+
+	@Override
+	public String getAPOCPath() {
+		// TODO Auto-generated method stub
+		return Constants.POA;
+	}
+}

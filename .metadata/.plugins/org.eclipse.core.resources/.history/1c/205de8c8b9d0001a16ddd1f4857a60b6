@@ -1,0 +1,101 @@
+package SCC;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Base64;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+
+public class ResourceCreater {
+	public static void CreateAE() {
+		String resourceName = "Device";
+		Namespace m2m = Namespace.getNamespace("m2m","http://www.onem2m.org/xml/protocols");
+		Document document = new Document();
+		
+		Element ae = new Element("ae",m2m);		
+		document.setRootElement(ae);
+		
+		Element api = new Element("api");
+		Element lbl = new Element("lbl");
+		Element rr = new Element("rr");
+		Element poa = new Element("poa");
+		ae.addNamespaceDeclaration(m2m);
+		ae.setAttribute("rn",resourceName);
+		api.addContent("app-sensor");
+		lbl.addContent("Type/sensor Category/temperature Location/home");
+		rr.addContent("false");
+		poa.addContent("127.0.0.1:8181");
+		ae.addContent(api);
+		ae.addContent(lbl);
+		ae.addContent(rr);
+		ae.addContent(poa);
+		XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());
+		send_request(outputter.outputString(ae));
+	}
+
+	public static void send_request(String data) {
+		try {
+		URL url = new URL("http://127.0.0.1:8181/~/mn-cse");
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		
+		connection.setRequestMethod("POST");
+		connection.setDoOutput(true);
+		connection.setDoInput(true);
+		connection.setRequestProperty("Content-Type", "application/xml;ty=2");
+		connection.setRequestProperty("Authorization", "Basic " + Base64.getEncoder().encodeToString("admin:admin".getBytes()));
+		connection.setUseCaches(false);		
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(connection.getOutputStream());		
+		System.out.println(data);
+		outputStreamWriter.write(data);
+		outputStreamWriter.flush();
+		outputStreamWriter.close();
+		connection.connect();		
+		
+//		AE ac = new AE();
+//		String appID = "test123";
+//		ac.setAppName(appID);
+//		ac.setAppID(appID);
+//		ac.setRequestReachability(true);
+//		RequestSender.createAE(ac);
+		
+		System.out.println(connection.getResponseCode());
+		
+		if(connection.getResponseCode() == 201) { //201 ��귽���\�Q�Ы�
+			System.out.println("Connect Success.");
+			InputStream inputStream = connection.getInputStream();
+			String reString = null;
+			try {
+				byte[] data1 = new byte[inputStream.available()];
+				inputStream.read(data1);
+				reString=new String(data1);
+				System.out.println(reString);
+			}catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+		else {
+			System.out.println("Connect Failed.");
+		}
+		
+		} catch (MalformedURLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}catch (UnsupportedEncodingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}catch (IOException e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+	}
+}

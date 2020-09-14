@@ -1,0 +1,33 @@
+package org.eclipse.om2m.sample.test_ipe;
+
+import java.util.Random;
+
+import org.eclipse.om2m.commons.resource.RequestPrimitive;
+import org.eclipse.om2m.commons.resource.ResponsePrimitive;
+import org.eclipse.om2m.interworking.service.InterworkingService;
+
+public class key_manager implements InterworkingService{
+
+	@Override
+	public ResponsePrimitive doExecute(RequestPrimitive request) {
+		ResponsePrimitive response = new ResponsePrimitive(request);
+		response.getResponseStatusCode();
+		System.out.println("hello .....");
+		String s = "";
+		for(int i = 0;i<16;i++) {
+			Random random = new Random();
+			int h = random.nextInt(16);
+			
+			s += Integer.toHexString(h);
+			
+		}
+		System.out.println(s);
+		return null;
+	}
+
+	@Override
+	public String getAPOCPath() {
+		// TODO Auto-generated method stub
+		return Constants.POA;
+	}
+}
